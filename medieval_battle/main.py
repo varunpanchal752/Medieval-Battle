@@ -2,12 +2,20 @@ import sys
 import re
 from battle import Platoon, UnitClass, BattlePlanner
 
+# Regular expression to validate tokens like "Spearmen#10"
+# - Matches exactly one of the six valid classes (UnitClass enum values)
+# - Followed by '#' and one or more digits (soldier count)
 TOKEN_RE = re.compile(r'^(' + '|'.join(c.value for c in UnitClass) + r')#(\d+)$')
 
 def parse_line(line: str, side: str):
+    """
+    Parse and validate a line of input containing 5 platoon tokens.
+    Else raises ValueError.
+    """
     tokens = [t.strip() for t in line.strip().split(';')]
     if len(tokens) != 5:
         raise ValueError(f"{side}: expected 5 platoons, got {len(tokens)}")
+    
     platoons = []
     seen = set()
     for tok in tokens:
@@ -24,6 +32,7 @@ def parse_line(line: str, side: str):
     return platoons
 
 def format_line(platoon_list):
+    """Format the final battle order as a semicolon-separated string."""
     return ';'.join(str(p) for p in platoon_list)
 
 def main():
